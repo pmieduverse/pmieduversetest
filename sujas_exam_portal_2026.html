@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>सुजस ई-प्रश्नोत्तरी 2026 - Ceramic Academy Exam Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        accent: {
+                            500: '#eab308',
+                            600: '#ca8a04'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Result Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #6b7280; border-radius: 4px; }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .dark .glass {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 z-40 glass border-b border-gray-200 dark:border-gray-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navTo('home')">
+                <div class="bg-gradient-to-tr from-emerald-600 to-teal-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg shadow-emerald-500/30">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-wide bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">CERAMIC ACADEMY</h1>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">सुजस ई-प्रश्नोत्तरी - जुलाई 2026</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Sound Toggle -->
+                <button id="soundToggle" onclick="app.toggleSound()" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition" title="Mute/Unmute Sound">
+                    <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+                </button>
+
+                <!-- Dark Mode Toggle -->
+                <button onclick="app.toggleDarkMode()" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition" title="Toggle Theme">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:inline"></i>
+                </button>
+
+                <!-- User Profile / Login Button -->
+                <div id="userHeaderArea" class="flex items-center">
+                    <!-- Dynamically filled -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- 1. AUTH / LOGIN MODAL / VIEW -->
+        <div id="viewLogin" class="hidden max-w-md mx-auto my-12 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+            <div class="text-center mb-6">
+                <div class="inline-block p-4 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 mb-3">
+                    <i class="fa-solid fa-user-graduate text-3xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold">परीक्षार्थी लॉगिन</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">अपना नाम दर्ज करके मॉक टेस्ट शुरू करें</p>
+            </div>
+            <form onsubmit="app.handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">पूरा नाम (Full Name)</label>
+                    <input type="text" id="loginName" required placeholder="उदा. विकास शर्मा" class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">रोल नंबर / आईडी (Optional)</label>
+                    <input type="text" id="loginRoll" placeholder="उदा. CA-2026-89" class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">अवतार चुनें (Select Avatar)</label>
+                    <div class="flex justify-between items-center gap-2 pt-1" id="avatarSelector">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> पोर्टल में प्रवेश करें
+                </button>
+            </form>
+        </div>
+
+        <!-- 2. HOME DASHBOARD VIEW -->
+        <div id="viewHome" class="space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-700 via-teal-800 to-gray-900 text-white p-8 sm:p-10 shadow-2xl">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="px-3 py-1 bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 rounded-full text-xs font-semibold uppercase tracking-wider">राजस्थान करंट अफेयर्स 2026</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-3 leading-tight">सुजस ई-प्रश्नोत्तरी 150 प्रश्न</h2>
+                    <p class="mt-3 text-gray-200 text-sm sm:text-base">राजस्थान सरकार की योजनाएं, नीतियां और आर्थिक विकास गतिविधियां (जुलाई 2026). अपनी तैयारी का विश्लेषण करें!</p>
+                    <div class="mt-6 flex flex-wrap gap-4">
+                        <button onclick="app.startQuiz('exam')" class="px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> मुख्य परीक्षा मोड (Real Exam)
+                        </button>
+                        <button onclick="app.startQuiz('practice')" class="px-6 py-3.5 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 font-semibold rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> अभ्यास मोड (Practice Mode)
+                        </button>
+                    </div>
+                </div>
+                <!-- Background Graphic -->
+                <i class="fa-solid fa-award absolute -right-6 -bottom-10 text-[200px] opacity-10 pointer-events-none"></i>
+            </div>
+
+            <!-- Features / Info Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Stat Card 1 -->
+                <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-start space-x-4">
+                    <div class="p-3 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-xl">
+                        <i class="fa-solid fa-list-check text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase">कुल प्रश्न (Questions)</h3>
+                        <p class="text-2xl font-bold mt-1">150 MCQ</p>
+                        <p class="text-xs text-gray-400 mt-1">Sujas Official July 2026 Key included</p>
+                    </div>
+                </div>
+
+                <!-- Stat Card 2 -->
+                <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-start space-x-4">
+                    <div class="p-3 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-xl">
+                        <i class="fa-solid fa-stopwatch text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase">परीक्षा समय (Timer)</h3>
+                        <p class="text-2xl font-bold mt-1">120 मिनट</p>
+                        <p class="text-xs text-gray-400 mt-1">Auto submission & negative marking</p>
+                    </div>
+                </div>
+
+                <!-- Stat Card 3 -->
+                <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-start space-x-4">
+                    <div class="p-3 bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 rounded-xl">
+                        <i class="fa-solid fa-bookmark text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase">बुकमार्क / पुनरीक्षण</h3>
+                        <p class="text-2xl font-bold mt-1" id="homeBookmarkCount">0 प्रश्न</p>
+                        <button onclick="app.startQuiz('bookmark')" class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline mt-1 block">सहेजे गए प्रश्न देखें &rarr;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Scoreboard / Leaderboard -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-500"></i> लीडरबोर्ड एवं पिछला प्रदर्शन
+                    </h3>
+                    <button onclick="app.clearHistory()" class="text-xs text-red-500 hover:underline">इतिहास साफ़ करें</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400">
+                            <tr>
+                                <th class="p-3 rounded-l-lg">दिनांक</th>
+                                <th class="p-3">नाम</th>
+                                <th class="p-3">मोड</th>
+                                <th class="p-3">अंक (Score)</th>
+                                <th class="p-3">सटीकता (Accuracy)</th>
+                                <th class="p-3 rounded-r-lg">स्थिति</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody" class="divide-y divide-gray-100 dark:divide-gray-700">
+                            <!-- JS injected history rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. ACTIVE QUIZ / EXAM INTERFACE -->
+        <div id="viewQuiz" class="hidden space-y-6">
+            <!-- Quiz Status Bar -->
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span id="modeBadge" class="px-3 py-1 rounded-full text-xs font-bold uppercase bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300">Exam Mode</span>
+                    <span class="text-sm font-semibold text-gray-500 dark:text-gray-400">प्रश्न: <span id="qCurrentNum" class="text-emerald-600 dark:text-emerald-400 font-bold">1</span> / <span id="qTotalNum">150</span></span>
+                </div>
+
+                <!-- Timer -->
+                <div id="timerContainer" class="flex items-center space-x-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-1.5 rounded-xl font-mono font-bold text-lg">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="timerDisplay">02:00:00</span>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="app.toggleBookmarkCurrent()" id="btnBookmark" class="px-3 py-1.5 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-xs font-semibold transition flex items-center gap-1.5">
+                        <i class="fa-regular fa-bookmark"></i> <span>बुकमार्क</span>
+                    </button>
+                    <button onclick="app.confirmSubmitQuiz()" class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-red-600/20 flex items-center gap-1.5">
+                        <i class="fa-solid fa-paper-plane"></i> टेस्ट सबमिट करें
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Workspace Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Left Main Question Card (3 Cols) -->
+                <div class="lg:col-span-3 space-y-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm relative">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-xs font-bold tracking-wider text-emerald-600 dark:text-emerald-400 uppercase">Question #<span id="qCardNum">1</span></span>
+                            <span class="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-gray-500 dark:text-gray-400">अंक: +1 | ऋणात्मक: -0.33</span>
+                        </div>
+
+                        <!-- Question Text -->
+                        <h3 id="qText" class="text-lg sm:text-xl font-bold leading-relaxed mb-6">
+                            Loading question...
+                        </h3>
+
+                        <!-- Options Container -->
+                        <div id="qOptions" class="space-y-3">
+                            <!-- Dynamic Options A, B, C, D -->
+                        </div>
+
+                        <!-- Instant Solution / Explanation Box (Practice Mode Only) -->
+                        <div id="explanationBox" class="hidden mt-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-sm">
+                            <p class="font-bold flex items-center gap-2 mb-1">
+                                <i class="fa-solid fa-circle-check text-emerald-600"></i> सही उत्तर & व्याख्या:
+                            </p>
+                            <p id="explanationText"></p>
+                        </div>
+                    </div>
+
+                    <!-- Question Navigation Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700">
+                        <div class="flex gap-2">
+                            <button onclick="app.prevQuestion()" id="btnPrev" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-xl font-semibold text-sm transition">
+                                &larr; पिछला
+                            </button>
+                            <button onclick="app.nextQuestion()" id="btnNext" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold text-sm transition shadow-md shadow-emerald-600/20">
+                                अगला &rarr;
+                            </button>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="app.clearCurrentResponse()" class="px-3 py-2 bg-gray-100 dark:bg-gray-700/60 hover:bg-gray-200 dark:hover:bg-gray-700 text-xs font-semibold rounded-xl text-gray-600 dark:text-gray-300 transition">
+                                उत्तर साफ़ करें
+                            </button>
+                            <button onclick="app.toggleMarkForReview()" id="btnMarkReview" class="px-3 py-2 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 hover:bg-amber-200 text-xs font-semibold rounded-xl transition">
+                                रिव्यू के लिए मार्क करें
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Question Palette (1 Col) -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col h-fit">
+                    <h4 class="font-bold text-sm mb-3 flex items-center justify-between">
+                        <span>प्रश्न ग्रिड (Question Grid)</span>
+                        <span class="text-xs text-gray-400 font-normal">150 Questions</span>
+                    </h4>
+
+                    <!-- Legend -->
+                    <div class="grid grid-cols-2 gap-2 text-xs mb-4 p-2 bg-gray-50 dark:bg-gray-700/40 rounded-xl">
+                        <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> हल किया</div>
+                        <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> रिव्यू के लिए</div>
+                        <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600"></span> शेष</div>
+                        <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full border-2 border-emerald-500"></span> वर्तमान</div>
+                    </div>
+
+                    <!-- Search Question -->
+                    <div class="mb-3">
+                        <input type="number" min="1" max="150" placeholder="प्रश्न संख्या खोजें..." oninput="app.jumpToQuestionNum(this.value)" class="w-full px-3 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                    </div>
+
+                    <!-- Scrollable Buttons Grid -->
+                    <div id="questionGrid" class="grid grid-cols-5 gap-2 max-h-[380px] overflow-y-auto p-1">
+                        <!-- 150 Question Buttons generated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. RESULT & PERFORMANCE ANALYTICS VIEW -->
+        <div id="viewResult" class="hidden space-y-8">
+            <!-- Score Overview Banner -->
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 sm:p-8 border border-gray-200 dark:border-gray-700 shadow-xl text-center relative overflow-hidden">
+                <span class="px-4 py-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider">परीक्षा परिणाम कार्ड</span>
+                <h2 class="text-3xl font-extrabold mt-2" id="resultTitle">बधाई हो! आपका टेस्ट पूरा हुआ</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" id="resultSubtitle">Sujas E-Quiz 2026 Test Summary</p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
+                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/50">
+                        <span class="text-xs uppercase text-gray-400 font-semibold block">कुल प्राप्तांक (Score)</span>
+                        <span class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block" id="resScore">0</span>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/50">
+                        <span class="text-xs uppercase text-gray-400 font-semibold block">सटीकता (Accuracy)</span>
+                        <span class="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1 block" id="resAccuracy">0%</span>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/50">
+                        <span class="text-xs uppercase text-gray-400 font-semibold block">सही उत्तर (Correct)</span>
+                        <span class="text-3xl font-black text-green-500 mt-1 block" id="resCorrect">0</span>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/50">
+                        <span class="text-xs uppercase text-gray-400 font-semibold block">गलत / छूटे (Incorrect/Skipped)</span>
+                        <span class="text-3xl font-black text-red-500 mt-1 block" id="resWrong">0</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex flex-wrap justify-center gap-3">
+                    <button onclick="app.navTo('home')" class="px-6 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-sm font-bold rounded-xl transition">
+                        <i class="fa-solid fa-house"></i> होम पर जाएँ
+                    </button>
+                    <button onclick="app.printResultReport()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition shadow-lg shadow-emerald-600/30">
+                        <i class="fa-solid fa-print"></i> परिणाम रिपोर्ट डाउनलोड / प्रिंट
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visual Analytics Chart & Review Filters -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Chart Container -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col items-center justify-center">
+                    <h3 class="font-bold text-sm uppercase text-gray-500 dark:text-gray-400 mb-4">प्रदर्शन का सचित्र विवरण</h3>
+                    <div class="w-56 h-56">
+                        <canvas id="resultChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Detailed Question Review List (2 Cols) -->
+                <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b dark:border-gray-700 pb-3">
+                        <h3 class="font-bold text-lg">प्रश्नों की समीक्षा एवं उत्तर कुंजी</h3>
+                        <div class="flex gap-1 text-xs" id="reviewFilterBtns">
+                            <button onclick="app.filterReview('all')" class="px-3 py-1 rounded-lg bg-emerald-600 text-white font-semibold">सभी (150)</button>
+                            <button onclick="app.filterReview('correct')" class="px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">सही</button>
+                            <button onclick="app.filterReview('wrong')" class="px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">गलत</button>
+                            <button onclick="app.filterReview('skipped')" class="px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">छूटे हुए</button>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Detailed Solution Cards -->
+                    <div id="reviewQuestionsList" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                        <!-- JS injected question review items -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 py-6 text-center text-xs text-gray-500 dark:text-gray-400">
+        <p>© 2026 Ceramic Academy - Shaping The Future. Opposite Health Point Hospital, Mahesh Nagar, Jaipur.</p>
+        <p class="mt-1">Helpline: +91 97005-77774 / +91 97005-77778 | Sujas E-Quiz Series</p>
+    </footer>
+
+    <!-- COMPLETE JAVASCRIPT APP ARCHITECTURE & QUESTION DATA ENGINE -->
+    <script>
+        // --- COMPLETE 150 QUESTIONS BANK (Sujas July 2026 Official PDF) ---
+        const QUESTIONS_DATA = [
+            { id: 1, q: "मुख्यमंत्री भजनलाल शर्मा ने लोकतंत्र सेनानियों को मिलने वाली मासिक चिकित्सा सहायता को 4 हजार रुपये से बढ़ाकर कितना करने की घोषणा की है?", options: ["5,000 रुपये", "4,500 रुपये", "5,500 रुपये", "6,000 रुपये"], ans: 0 },
+            { id: 2, q: "पीएम-जनमन योजना का पूरा नाम क्या है?", options: ["प्रधानमंत्री जन-कल्याण और न्याय अभियान", "प्रधानमंत्री जनजाति आदिवासी न्याय महाअभियान", "प्रधानमंत्री जनजातीय आवास निर्माण महाअभियान", "प्रधानमंत्री जन-धन और मनरेगा योजना"], ans: 1 },
+            { id: 3, q: "हाल ही में (25 जून, 2026) 'फर्टीलाइजर सेल्स एप्लीकेशन सिस्टम' को पायलट प्रोजेक्ट के रूप में राजस्थान के किन दो जिलों में लागू किया गया है?", options: ["जयपुर और जोधपुर", "कोटा और बारां", "राजसमंद और सिरोही", "श्रीगंगानगर और हनुमानगढ़"], ans: 2 },
+            { id: 4, q: "राजस्थान 33 लाख से अधिक एमएसएमई उद्यमों के साथ देश में किस स्थान पर है?", options: ["पहले", "दूसरे", "तीसरे", "चौथे"], ans: 3 },
+            { id: 5, q: "पंच गौरव योजना में 'एक जिला- एक उत्पाद' के तहत नागौर जिले का उत्पाद कौन सा है?", options: ["टेक्सटाईल उत्पाद", "पान मैथी एवं मसाला प्रसंस्करण", "ग्रेनाइट एवं मार्बल के उत्पाद", "सेण्ड स्टोन के उत्पाद"], ans: 1 },
+            { id: 6, q: "हस्तशिल्पियों, बुनकरों एवं सूक्ष्म उद्यमों के उत्पादों को बाजार उपलब्ध कराने के लिए राज्य सरकार द्वारा प्रथम चरण में पीपीपी मॉडल पर कहां 'हाट' विकसित किए जाएंगे?", options: ["जयपुर, जोधपुर, उदयपुर और बीकानेर", "पुष्कर, नाथद्वारा, जैसलमेर और अलवर", "अजमेर, खाटूश्यामजी और बाड़मेर", "कोटा, बूंदी, झालावाड़ और बारां"], ans: 1 },
+            { id: 7, q: "हाल ही में (28 जून, 2026) सरिस्का टाइगर रिजर्व में बाघ पुनर्स्थापना के कितने वर्ष पूर्ण होने के अवसर पर 'बाघ पुनर्स्थापनाः अवसर एवं चुनौतियां' विषय पर राष्ट्रीय कार्यशाला का आयोजन किया गया?", options: ["12 वर्ष", "15 वर्ष", "18 वर्ष", "20 वर्ष"], ans: 2 },
+            { id: 8, q: "'मन की बात' के 135वें संस्करण में प्रधानमंत्री ने महिलाओं द्वारा संचालित 'हरगिला' पक्षी संरक्षण अभियान की सराहना की, यह किस राज्य से संबंधित है?", options: ["मेघालय", "असम", "नागालैंड", "अरुणाचल प्रदेश"], ans: 1 },
+            { id: 9, q: "राजस्थान के टियर-2 और टियर-3 शहरों में बुनियादी सुविधाओं के विकास के लिए हाल ही में (28 जून, 2026) स्वायत्त शासन विभाग ने किस संस्थान के साथ एमओयू पर हस्ताक्षर किए हैं?", options: ["नाबार्ड", "हुडको", "विश्व बैंक", "एशियाई विकास बैंक"], ans: 1 },
+            { id: 10, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत टोंक जिले का उत्पाद कौन सा है?", options: ["स्टोन आधारित उत्पाद", "कृषि आधारित उत्पाद", "स्लेट स्टोन के उत्पाद", "मार्बल एवं ग्रेनाईट के उत्पाद"], ans: 1 },
+            { id: 11, q: "राजस्थान निवेश प्रोत्साहन योजना में संशोधन करते हुए इलेक्ट्रॉनिक्स एवं सेमीकंडक्टर क्षेत्र के लिए 'मैन्यूफैक्चरिंग पैकेज' के तहत न्यूनतम निवेश की सीमा को घटाकर कितना कर दिया गया है?", options: ["5 करोड़ रुपये", "10 करोड़ रुपये", "15 करोड़ रुपये", "25 करोड़ रुपये"], ans: 2 },
+            { id: 12, q: "बाघ पुनर्स्थापन के बाद वर्तमान में सरिस्का टाइगर रिजर्व में बाघों की कुल संख्या कितनी पहुंच गई है?", options: ["56", "50", "43", "62"], ans: 0 },
+            { id: 13, q: "'मन की बात' के 135वें संस्करण में प्रधानमंत्री द्वारा उल्लेखित 'जीवित रूट ब्रिज' किस राज्य की विशेषता है?", options: ["मेघालय", "त्रिपुरा", "सिक्किम", "मिजोरम"], ans: 0 },
+            { id: 14, q: "विश्व स्वास्थ्य संगठन द्वारा भारत को आधिकारिक रूप से 'पोलियो मुक्त देश' का प्रमाण-पत्र कब प्रदान किया गया था?", options: ["13 जनवरी 2011", "24 अक्टूबर 2012", "27 मार्च 2014", "15 अगस्त 2015"], ans: 2 },
+            { id: 15, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत भरतपुर जिले का उत्पाद कौन सा है?", options: ["कृषि आधारित उत्पाद", "टेक्सटाईल उत्पाद", "पान मैथी एवं मसाला प्रसंस्करण", "सेण्ड स्टोन के उत्पाद"], ans: 0 },
+            { id: 16, q: "अलवर की किस झील या बांध को 'रामसर साइट' का दर्जा दिया गया है?", options: ["सिलीसेढ़ झील", "मंगलासर बांध", "मानसरोवर बांध", "जयसमंद झील"], ans: 0 },
+            { id: 17, q: "केंद्र सरकार द्वारा गठित 'अर्बन चैलेंज फंड' के माध्यम से आगामी 5 वर्षों में राजस्थान के शहरों के व्यापक विकास के लिए कितने करोड़ रुपये की परियोजनाएं प्रस्तावित की गई हैं?", options: ["10,500 करोड़ रुपये", "12,000 करोड़ रुपये", "15,800 करोड़ रुपये", "20,000 करोड़ रुपये"], ans: 2 },
+            { id: 18, q: "शेखावाटी क्षेत्र को यमुना का पानी उपलब्ध कराने के लिए हाल ही में (29 जून 2026) राजस्थान ने किस राज्य के साथ ऐतिहासिक 'यमुना जल समझौते' पर हस्ताक्षर किए हैं?", options: ["पंजाब", "उत्तर प्रदेश", "हरियाणा", "मध्य प्रदेश"], ans: 2 },
+            { id: 19, q: "राजस्थान इंटरनेशनल सेंटर जयपुर में 1-2 जुलाई, 2026 को कौन-से 'राष्ट्रीय ई-गवर्नेस सम्मेलन' का आयोजन किया गया?", options: ["25वें", "27वें", "29वें", "31वें"], ans: 2 },
+            { id: 20, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत डीग जिले का उत्पाद कौन सा है?", options: ["क्वार्ट्ज एवं फेल्सपार पाउडर", "स्टोन आधारित उत्पाद", "स्लेट स्टोन के उत्पाद", "ग्रेनाइट एवं मार्बल के उत्पाद"], ans: 1 },
+            { id: 21, q: "वर्तमान में भारत में कुल कितने टाइगर रिजर्व हैं?", options: ["54 टाइगर रिजर्व", "56 टाइगर रिजर्व", "58 टाइगर रिजर्व", "60 टाइगर रिजर्व"], ans: 2 },
+            { id: 22, q: "अर्बन चैलेंज फंड के तहत परियोजनाओं के वित्तीय पोषण का निर्धारित अनुपात निम्नलिखित में से क्या है?", options: ["60% केंद्र : 40% राज्य", "90% केंद्र : 10% राज्य", "50% केंद्र : 25% राज्य : 25% स्थानीय निकाय", "25% केंद्र : 25% राज्य व निकाय: 50% वित्तीय संस्थान"], ans: 3 },
+            { id: 23, q: "यमुना जल परियोजना के तहत हरियाणा के किस बैराज से भूमिगत पाइपलाइन के माध्यम से यमुना का जल राजस्थान लाया जाएगा?", options: ["ताजेवाला हैड", "हथिनीकुंड बैराज", "ओखला बैराज", "डाकपत्थर बैराज"], ans: 1 },
+            { id: 24, q: "जयपुर में हाल ही में किस वैश्विक कंपनी द्वारा एक अत्याधुनिक 'एआई रेडी डेटा सेंटर' स्थापित किया गया है?", options: ["माइक्रोसॉफ्ट", "एसटीटी जीडीसी", "गूगल क्लाउड", "अमेजन वेब सर्विसेज"], ans: 1 },
+            { id: 25, q: "पंच गौरव योजना में 'एक जिला- एक उत्पाद' के तहत धौलपुर जिले का उत्पाद कौन सा है?", options: ["सेण्ड स्टोन के उत्पाद", "मार्बल एवं ग्रेनाईट के उत्पाद", "स्टोन आधारित उत्पाद", "कृषि आधारित उत्पाद"], ans: 2 },
+            { id: 26, q: "सरिस्का में 28 जून को 'सरिस्का डे' मनाने की शुरुआत वर्ष 2025 में किस बाघिन की स्मृति में की गई थी?", options: ["बाघिन मछली", "बाघिन राजमाता", "बाघिन टी-16", "बाघिन सुल्ताना"], ans: 1 },
+            { id: 27, q: "यमुना का पानी भूमिगत पाइपलाइन द्वारा राजस्थान के किस जिले में स्थित 'हंसियावास' जलाशय तक पहुंचाया जाएगा?", options: ["सीकर", "झुंझनूं", "चूरू", "बीकानेर"], ans: 2 },
+            { id: 28, q: "दो दिवसीय '29वें राष्ट्रीय ई-गवर्नेस सम्मेलन' का आयोजन राजस्थान के किस जिले में किया गया?", options: ["जोधपुर", "जयपुर", "अजमेर", "उदयपुर"], ans: 1 },
+            { id: 29, q: "'वीबी जी राम जी योजना' के तहत ग्रामीण श्रमिकों के लिए सालाना रोजगार की कानूनी गारंटी बढ़ाकर कितने दिन कर दिया गया है?", options: ["120 दिन", "200 दिन", "150 दिन", "125 दिन"], ans: 1 },
+            { id: 30, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत करौली जिले का उत्पाद कौन सा है?", options: ["स्लेट स्टोन के उत्पाद", "सेण्ड स्टोन के उत्पाद", "स्टोन आधारित उत्पाद", "पान मैथी एवं मसाला प्रसंस्करण"], ans: 3 },
+            { id: 31, q: "यमुना जल परियोजना के निर्माण एवं सुचारू संचालन के लिए किस का गठन किया जाएगा?", options: ["शेखावाटी-यमुना जल निगम लिमिटेड", "राजस्थान हरियाणा यमुना वाटर एसपीवी", "राष्ट्रीय यमुना जल प्रबंधन प्राधिकरण", "राज-हरि जल विकास बोर्ड"], ans: 1 },
+            { id: 32, q: "मुख्यमंत्री भजनलाल शर्मा की उपस्थिति में 2 जुलाई, 2026 को 'वीबी जी राम जी योजना' का राज्य स्तरीय शुभारंभ कार्यक्रम किस जिले में हुआ?", options: ["अजमेर", "ब्यावर", "जयपुर", "डीग"], ans: 1 },
+            { id: 33, q: "राजस्थान में आयोजित होने जा रहे 'लोकमंथन' के 5वें संस्करण की मुख्य थीम क्या निर्धारित की गई है?", options: ["उपनिवेशवाद से मुक्ति", "वसुधैव कुटुम्बकम् और भारत", "हम भारत के लोग", "एक भारत श्रेष्ठ भारत"], ans: 2 },
+            { id: 34, q: "राजस्थान मेट्रो रेल कॉर्पोरेशन लिमिटेड का प्रशासनिक स्वरूप क्या है?", options: ["पूर्णतः राजस्थान सरकार के स्वामित्व वाली कंपनी", "भारत और राजस्थान सरकार की 50:50 साझेदारी वाली संयुक्त कंपनी", "पीपीपी मॉडल पर निजी स्वामित्व वाली संस्था", "दिल्ली मेट्रो रेल कॉर्पोरेशन की एक सहायक शाखा"], ans: 1 },
+            { id: 35, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत सवाई माधोपुर जिले का उत्पाद कौन सा है?", options: ["बीकानेरी नमकीन", "मार्बल के उत्पाद", "लकड़ी के उत्पाद", "सरसों तेल"], ans: 1 },
+            { id: 36, q: "किसानों को फसल बुवाई-कटाई के समय श्रमिकों की कमी का सामना न करना पड़े, इसके लिए 'वीबी जी राम जी योजना' के तहत राज्य सरकार अधिकतम कितने दिनों का 'कार्य विराम' घोषित कर सकती है?", options: ["30 दिन", "45 दिन", "60 दिन", "90 दिन"], ans: 2 },
+            { id: 37, q: "प्रधानमंत्री ने 4 जुलाई, 2026 को 'जयपुर मेट्रो रेल परियोजना फेज-2' का वर्चुअल शिलान्यास राजस्थान के किस जिले से किया?", options: ["जयपुर", "बालोतरा", "ब्यावर", "जोधपुर"], ans: 1 },
+            { id: 38, q: "वर्तमान में भारत विश्व में 'रिफाइनरी क्षमता' के मामले में किस स्थान पर पहुंच गया है?", options: ["दूसरे", "तीसरे", "चौथे", "पांचवें"], ans: 1 },
+            { id: 39, q: "'पांचना बांध' राजस्थान के किस जिले में स्थित है?", options: ["सवाई माधोपुर", "दौसा", "करौली", "भरतपुर"], ans: 2 },
+            { id: 40, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत बीकानेर जिले का उत्पाद कौन सा है?", options: ["ऑटोमोबाइल पार्ट्स", "रत्नाभूषण", "पत्थर के उत्पाद", "नमकीन"], ans: 3 },
+            { id: 41, q: "'वीबी जी राम जी योजना' के बजट में 'प्रशासनिक व्यय' की सीमा को 6 प्रतिशत से बढ़ाकर कितना कर दिया गया है?", options: ["7%", "8%", "9%", "10%"], ans: 2 },
+            { id: 42, q: "प्रधानमंत्री नरेन्द्र मोदी द्वारा देश के पहले 'ग्रीनफील्ड एकीकृत रिफाइनरी-सह- पेट्रोकेमिकल कॉम्प्लेक्स' का लोकार्पण कहां किया गया?", options: ["बाप, फलौदी", "पचपदरा, बालोतरा", "बोरानाडा, जोधपुर", "करणीसर, बीकानेर"], ans: 1 },
+            { id: 43, q: "हाल ही में प्रधानमंत्री द्वारा 'उड़े देश का आम नागरिक' विजन के तहत किस राष्ट्रीय योजना के 'संशोधित संस्करण' का शुभारंभ किया गया?", options: ["पीएम गति शक्ति योजना", "संशोधित उड़ान योजना", "स्वदेश दर्शन योजना 2.0", "राष्ट्रीय वायुमार्ग विकास योजना"], ans: 1 },
+            { id: 44, q: "पैक्स कम्प्यूटरीकरण अभियान के तहत 'ई-पैक्स' के माध्यम से ऑनलाइन लेनदेन के मामले में राजस्थान का देश में कौन-सा स्थान है?", options: ["प्रथम", "द्वितीय", "तृतीय", "चतुर्थ"], ans: 0 },
+            { id: 45, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत चूरू जिले का उत्पाद कौन सा है?", options: ["लकड़ी के उत्पाद", "कृषि आधारित उत्पाद", "ऑटोमोबाइल पार्ट्स", "रत्नाभूषण"], ans: 0 },
+            { id: 46, q: "'वीबी जी राम जी योजना' का राष्ट्रीय स्तर पर शुभारंभ किस स्थान से किया गया?", options: ["जयपुर, राजस्थान", "वाराणसी, उत्तर प्रदेश", "तिरुपति, आंध्र प्रदेश", "भोपाल, मध्य प्रदेश"], ans: 2 },
+            { id: 47, q: "उत्तर-पश्चिम राजस्थान की रेल कनेक्टिविटी को सुदृढ़ करने के उद्देश्य से प्रधानमंत्री द्वारा हाल ही में किन दो रेल खंडों की 'रेल दोहरीकरण' परियोजनाओं को राष्ट्र को समर्पित किया गया?", options: ["चूरू-सादुलपुर और चूरू-रतनगढ़", "बीकानेर-सूरतगढ़ और हनुमानगढ़-सादुलपुर", "जयपुर-सीकर और सीकर-झुंझनूं", "जोधपुर-मेड़ता और मेड़ता-डेगाना"], ans: 0 },
+            { id: 48, q: "एचपीसीएल राजस्थान रिफाइनरी का नेल्सन कॉम्प्लेक्सिटी इंडेक्स कितना है, जो इसे तकनीकी रूप से विश्व की टॉप 25% रिफाइनरीज में शामिल करता है?", options: ["11.5", "14.2", "17.0", "19.5"], ans: 2 },
+            { id: 49, q: "राजस्थान के किस जिले में 'सहकार वन' विकसित करने के लिए 6 जुलाई, 2026 को ई-भूमि पूजन किया गया?", options: ["जोधपुर", "जयपुर", "बीकानेर", "बालोतरा"], ans: 3 },
+            { id: 50, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत हनुमानगढ़ जिले का उत्पाद कौन सा है?", options: ["लकड़ी के हस्तशिल्प उत्पाद", "सरसों तेल", "बीकानेरी नमकीन", "कृषि आधारित उत्पाद"], ans: 1 },
+            { id: 51, q: "प्रधानमंत्री ने 4 जुलाई, 2026 को राजस्थान के किस शहर के एयरपोर्ट के नए टर्मिनल भवन का उद्घाटन किया?", options: ["उदयपुर", "जोधपुर", "अजमेर", "जयपुर"], ans: 1 },
+            { id: 52, q: "पचपदरा में आयोजित मुख्य रिफाइनरी उद्घाटन समारोह के दौरान डिजिटल कनेक्टिविटी का एक नया रिकॉर्ड बना। इस कार्यक्रम से वर्चुअल माध्यम से राजस्थान के कुल कितने नागरिक सीधे जुड़े?", options: ["25 लाख", "38 लाख", "45 लाख", "53 लाख"], ans: 3 },
+            { id: 53, q: "राजस्थान में निर्माणाधीन 'मुकुंदरा टनल' की लंबाई लगभग कितनी है?", options: ["5 किलोमीटर", "8 किलोमीटर", "11 किलोमीटर", "15 किलोमीटर"], ans: 1 },
+            { id: 54, q: "राजस्थान में होमस्टे (पेइंग गेस्ट हाउस) के पंजीकरण एवं नवीनीकरण के लिए आवेदन किस पोर्टल के माध्यम से पूर्णतः ऑनलाइन कर दिए गए हैं?", options: ["राज-काज पोर्टल", "निवेश राजस्थान पोर्टल", "राजस्थान सिंगल साइन-ऑन पोर्टल", "राज-पर्यटन पोर्टल"], ans: 2 },
+            { id: 55, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत श्रीगंगानगर जिले का उत्पाद कौन सा है?", options: ["सरसों तेल", "मार्बल के उत्पाद", "पत्थर के उत्पाद", "ऑटोमोबाईल पार्ट्स"], ans: 0 },
+            { id: 56, q: "हाल ही में (जुलाई 2026) 128 देशों के समूह वाले 'इंटरनेशनल सोलर अलायंस' के साथ 'फ्रेमवर्क फॉर एक्शन' पर हस्ताक्षर करने वाला राजस्थान देश का कौनसा राज्य बन गया है?", options: ["पहला", "दूसरा", "तीसरा", "चौथा"], ans: 0 },
+            { id: 57, q: "सरदार सरोवर परियोजना की निर्माण लागत और 'नर्मदा अवार्ड' के लंबित भुगतान के वन-टाइम सेटलमेंट हेतु हाल ही में किन राज्यों के मध्य ऐतिहासिक समझौता हुआ है?", options: ["राजस्थान, मध्य प्रदेश और उत्तर प्रदेश", "राजस्थान, गुजरात, महाराष्ट्र और मध्यप्रदेश", "राजस्थान, पंजाब और गुजरात", "राजस्थान, गुजरात और मध्य प्रदेश"], ans: 1 },
+            { id: 58, q: "केंद्रीय सड़क परिवहन एवं राजमार्ग मंत्री ने पूर्व प्रस्तावित 'चंबल एक्सप्रेस हाइवे' का नाम बदलकर क्या रखने की घोषणा की है?", options: ["महाराणा प्रताप एक्सप्रेसवे", "श्यामा प्रसाद मुखर्जी एक्सप्रेसवे", "अटल एक्सप्रेसवे", "वीर सावरकर एक्सप्रेसवे"], ans: 2 },
+            { id: 59, q: "राजस्थान कृषि विभाग ने हाल ही में (जुलाई, 2026) कुल कितने संगठनों के साथ ऐतिहासिक एमओयू पर हस्ताक्षर किए हैं?", options: ["21", "25", "32", "50"], ans: 2 },
+            { id: 60, q: "पंच गौरव योजना में 'एक जिला- एक उत्पाद' के तहत अलवर जिले का उत्पाद कौन सा है?", options: ["रत्नाभूषण", "ऑटोमोबाइल पार्ट्स", "कृषि आधारित उत्पाद", "लकड़ी के उत्पाद"], ans: 1 },
+            { id: 61, q: "विद्युत मांग का सटीक आकलन करने, नेटवर्क की बेहतर योजना के लिए राजस्थान के किस विद्युत वितरण निगम में एआई तथा 'डिजिटल ट्विन तकनीक' पर आधारित पायलट परियोजना शुरू की जाएगी?", options: ["जयपुर विद्युत वितरण निगम लिमिटेड", "अजमेर विद्युत वितरण निगम लिमिटेड", "जोधपुर विद्युत वितरण निगम लिमिटेड", "बीकानेर इलेक्ट्रिसिटी सप्लाई लिमिटेड"], ans: 1 },
+            { id: 62, q: "नर्मदा जल विवाद प्राधिकरण द्वारा किस वर्ष में 'अवार्ड' पारित कर राजस्थान, मध्य प्रदेश, गुजरात और महाराष्ट्र के मध्य जल का ऐतिहासिक आवंटन किया गया था?", options: ["1969 में", "1973 में", "1979 में", "1985 में"], ans: 2 },
+            { id: 63, q: "कर संग्रहण प्रणाली में पारदर्शिता लाने के लिए फेसलैस स्क्रूटनी लागू करने वाला राजस्थान देश का कौन-सा राज्य बन गया है?", options: ["पहला", "दूसरा", "तीसरा", "चौथा"], ans: 0 },
+            { id: 64, q: "दिल्ली-मुंबई एक्सप्रेसवे से कनेक्टिविटी को बेहतर बनाने के लिए, हाल ही में राजस्थान के किस वन्यजीव अभयारण्य को 'बाईपास' करते हुए NH-52 से एक नया 8-लेन लिंक रोड बनाने की घोषणा की गई है?", options: ["रणथंभौर राष्ट्रीय उद्यान", "रामगढ़ विषधारी अभयारण्य", "मुकुंदरा वाइल्डलाइफ सेंचुरी", "जवाहर सागर अभयारण्य"], ans: 2 },
+            { id: 65, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत दौसा जिले का उत्पाद कौन सा है?", options: ["बीकानेरी नमकीन", "सरसों तेल", "पत्थर के उत्पाद", "लकड़ी के हस्तशिल्प उत्पाद"], ans: 2 },
+            { id: 66, q: "देश में आधुनिक तकनीक और नवाचारों को बढ़ावा देते हुए सस्टेनेबल इंफ्रास्ट्रक्चर के तहत, अब तक सड़क निर्माण में लगभग कितने टन 'कचरे' का उपयोग किया जा चुका है?", options: ["20 लाख टन", "50 लाख टन", "80 लाख टन", "100 लाख टन"], ans: 2 },
+            { id: 67, q: "प्रदेश के किसानों को योजनाओं का लाभ एक ही डिजिटल प्लेटफॉर्म पर सुगमता से उपलब्ध कराने के लिए राज्य सरकार द्वारा कौन-सा पोर्टल विकसित किया गया है?", options: ["राज किसान साथी ऐप", "ई-कृषक राजस्थान पोर्टल", "मुख्यमंत्री किसान सुविधा ऐप", "धरा राजस्थान पोर्टल"], ans: 0 },
+            { id: 68, q: "राजस्थान सरकार की महत्वाकांक्षी 'रामजल सेतु लिंक परियोजना' के प्रथम चरण से प्रदेश के कितने जिले लाभान्वित होंगे?", options: ["13 जिले", "15 जिले", "21 जिले", "17 जिले"], ans: 3 },
+            { id: 69, q: "प्रदेश के 152 नगरीय निकायों में पुराने कचरे के वैज्ञानिक निस्तारण के लिए कुल कितने करोड़ रुपये की परियोजना का क्रियान्वयन किया जा रहा है?", options: ["150 करोड़ रुपये", "250 करोड़ रुपये", "310 करोड़ रुपये", "500 करोड़ रुपये"], ans: 2 },
+            { id: 70, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत जयपुर जिले का उत्पाद कौन सा है?", options: ["रत्नाभूषण", "मार्बल के उत्पाद", "ऑटोमोबाईल पार्ट्स", "कृषि आधारित उत्पाद"], ans: 0 },
+            { id: 71, q: "सहकारिता आधारित डिजिटल सेवा मॉडल 'भारत टैक्सी' प्लेटफॉर्म प्रदेश के किस शहर में विकसित किया गया है?", options: ["जोधपुर", "जयपुर", "उदयपुर", "कोटा"], ans: 1 },
+            { id: 72, q: "रामजल सेतु लिंक परियोजना के तहत 'चंबल एक्वाडक्ट' राजस्थान के किन दो जिलों को आपस में जोड़ेगा?", options: ["सवाई माधोपुर और टोंक", "जयपुर और दौसा", "कोटा और बूंदी", "झालावाड़ और बारां"], ans: 2 },
+            { id: 73, q: "राजस्थान सरकार द्वारा 'जीरो डंपसाइट' के राष्ट्रीय लक्ष्य को साकार करने के लिए प्रदेश के नगरीय निकायों से कुल कितने लाख घन मीटर 'लिगेसी वेस्ट' से मुक्ति पाने का लक्ष्य रखा गया है?", options: ["50 लाख घन मीटर", "60 लाख घन मीटर", "75 लाख घन मीटर", "90 लाख घन मीटर"], ans: 2 },
+            { id: 74, q: "राज्य सरकार ने विभिन्न सेवा नियमों में संशोधन करते हुए कार्मिकों को पदोन्नति के पर्याप्त अवसर देने के लिए निर्धारित अनुभव में कितने वर्ष की छूट प्रदान की है?", options: ["1 वर्ष", "2 वर्ष", "3 वर्ष", "5 वर्ष"], ans: 1 },
+            { id: 75, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत झुंझुनूं जिले का उत्पाद कौन सा है?", options: ["पत्थर के उत्पाद", "सरसों तेल", "लकड़ी के हस्तशिल्प उत्पाद", "बीकानेरी नमकीन"], ans: 0 },
+            { id: 76, q: "केंद्र सरकार द्वारा किस मिशन के तहत 'जीरो डंपसाइट' का राष्ट्रीय लक्ष्य निर्धारित किया गया है?", options: ["स्वच्छ भारत मिशन-शहरी 2.0", "अमृत मिशन 2.0", "राष्ट्रीय हरित पर्यावरण मिशन", "स्मार्ट सिटी मिशन 2.0"], ans: 0 },
+            { id: 77, q: "राजस्थान में केंद्र सरकार के अनुरूप ग्रेच्युटी की अधिकतम सीमा 20 लाख रुपये से बढ़ाकर कितने लाख रुपये कर दी गई है?", options: ["22 लाख रुपये", "25 लाख रुपये", "30 लाख रुपये", "35 लाख रुपये"], ans: 1 },
+            { id: 78, q: "राजस्थान टेक्सटाइल एवं अपैरल नीति-2025 के बेहतर क्रियान्वयन और वस्त्र उद्योग को प्रोत्साहित करने के लिए हाल ही में किस नई सेल का गठन किया गया है?", options: ["राजस्थान टेक्सटाइल संवर्द्धन केंद्र", "राज्य स्तरीय डेडिकेटेड टेक्सटाइल सेल", "मुख्यमंत्री वस्त्र विकास ब्यूरो", "राज-टेक्सटाइल एक्सपोर्ट विंग"], ans: 1 },
+            { id: 79, q: "वित्तीय वर्ष 2026-27 के लिए 'मुख्यमंत्री थार सीमा क्षेत्र विकास कार्यक्रम' हेतु कितनी राशि का प्रावधान किया गया है?", options: ["50 करोड़ रुपये", "100 करोड़ रुपये", "150 करोड़ रुपये", "200 करोड़ रुपये"], ans: 1 },
+            { id: 80, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत खैरथल-तिजारा जिले का उत्पाद कौन सा है?", options: ["ऑटोमोबाइल पार्ट्स", "रत्नाभूषण", "कृषि आधारित उत्पाद", "लकड़ी के उत्पाद"], ans: 2 },
+            { id: 81, q: "टेक्सटाइल एक्सपोर्ट एक्शन प्लान के तहत राजस्थान के कितने जिलों के लिए पहली बार 'जिला स्तरीय टेक्सटाइल निर्यात कार्ययोजना' तैयार की गई है?", options: ["7 जिले", "11 जिले", "15 जिले", "33 जिले"], ans: 1 },
+            { id: 82, q: "नए जिलों के गठन के पश्चात 'मेवात क्षेत्रीय विकास योजना' के तहत वित्तीय वर्ष 2026-27 हेतु किन जिलों में विकास कार्यों का अनुमोदन किया गया है?", options: ["अलवर, भरतपुर और डीग", "अलवर, डीग और खैरथल-तिजारा", "भरतपुर, धौलपुर और करौली", "कोटपूतली-बहरोड़, खैरथल-तिजारा और अलवर"], ans: 1 },
+            { id: 83, q: "राजस्थान विधानसभा के कितने वर्ष पूर्ण होने के उपलक्ष्य में 'विधायी गौरव यात्रा' का समारोह जयपुर में 15 जुलाई 2026 को आयोजित हुआ?", options: ["50 वर्ष", "60 वर्ष", "75 वर्ष", "100 वर्ष"], ans: 2 },
+            { id: 84, q: "12वें 'विश्व युवा कौशल दिवस' के अवसर पर राजस्थान कौशल, नियोजन एवं उद्यमिता विभाग द्वारा राज्य स्तरीय कार्यक्रम का आयोजन कहां किया गया?", options: ["जयपुर", "जोधपुर", "उदयपुर", "अजमेर"], ans: 0 },
+            { id: 85, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत कोटपूतली-बहरोड़ जिले का उत्पाद कौन सा है?", options: ["टेक्सटाइल उत्पाद", "ऑटोमोबाइल पार्ट्स", "लकड़ी के फर्नीचर", "ग्रेनाईट के उत्पाद"], ans: 1 },
+            { id: 86, q: "राजस्थान के किन 4 जिलों को एसपाइरेशनल (आकांक्षी) जिलों के रूप में टेक्सटाइल एक्शन प्लान में शामिल किया गया है?", options: ["जयपुर, जोधपुर, कोटा और अजमेर", "श्रीगंगानगर, हनुमानगढ़, नागौर और चूरू", "भीलवाड़ा, चित्तौड़गढ़, बांसवाड़ा और जालौर", "बीकानेर, जैसलमेर, बाड़मेर और पाली"], ans: 1 },
+            { id: 87, q: "राजस्थान ने 'पीएम सूर्य घर मुफ्त बिजली योजना' के तहत हरित ऊर्जा के क्षेत्र में कितनी रूफटॉप सोलर स्थापित क्षमता का ऐतिहासिक कीर्तिमान हासिल किया है?", options: ["500 मेगावाट", "1000 मेगावाट", "1500 मेगावाट", "2000 मेगावाट"], ans: 1 },
+            { id: 88, q: "जयपुर में हाल ही में 'इंटरनेशनल कॉन्फ्रेंस ऑन इलेक्शंस, मीडिया एंड वोटर एजुकेशन' का आयोजन किन संस्थानों के सहयोग से किया गया?", options: ["भारत निर्वाचन आयोग, राजस्थान वि.वि.", "आईआईआईडीईएम नई दिल्ली और नेशनल लॉ यूनिवर्सिटी जोधपुर", "नीति आयोग और राजस्थान लोक प्रशासन संस्थान", "आईआईआईडीईएम नई दिल्ली और एमएनआईटी जयपुर"], ans: 1 },
+            { id: 89, q: "राजस्थान में नार्को टेररिज्म और अवैध मादक पदार्थों की तस्करी पर प्रभावी अंकुश लगाने के लिए 'एंटी नारकोटिक्स टास्क फोर्स' का गठन कब किया गया था?", options: ["जनवरी 2024", "अक्टूबर 2025", "मार्च 2026", "मई 2026"], ans: 1 },
+            { id: 90, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत सीकर जिले का उत्पाद कौन सा है?", options: ["लकड़ी के फर्नीचर", "कशीदाकारी", "येलो स्टोन के उत्पाद", "टेक्सटाइल के उत्पाद"], ans: 0 },
+            { id: 91, q: "राजस्थान किस पशु उत्पाद या कृषि उत्पाद के उत्पादन में पूरे देश में 'प्रथम' स्थान पर है?", options: ["कपास उत्पादन", "ऊन उत्पादन", "रेशम उत्पादन", "जूट उत्पादन"], ans: 1 },
+            { id: 92, q: "राजस्थान में 'पीएम सूर्य घर मुफ्त बिजली योजना' के तहत जुलाई 2026 तक लगभग कितने घरों पर रूफटॉप सोलर संयंत्र स्थापित किए जा चुके हैं?", options: ["1.50 लाख", "2.65 लाख", "3.50 लाख", "5.00 लाख"], ans: 1 },
+            { id: 93, q: "नई दिल्ली में आयोजित वैश्विक वस्त्र प्रदर्शनी 'भारत टेक्स 2026' में 'राजस्थान पैवेलियन' को किस थीम पर तैयार किया गया?", options: ["सूर्य नगरी", "झील नगरी", "गुलाबी नगरी", "स्वर्ण नगरी"], ans: 1 },
+            { id: 94, q: "वीबी जी राम जी योजना के तहत श्रम नियोजन के मामले में राजस्थान का देशभर में कौन-सा स्थान है?", options: ["प्रथम", "द्वितीय", "तृतीय", "चतुर्थ"], ans: 0 },
+            { id: 95, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत बाड़मेर जिले का उत्पाद कौन सा है?", options: ["टेक्सटाइल उत्पाद", "ग्रेनाईट के उत्पाद", "कशीदाकारी", "सोनामुखी के उत्पाद"], ans: 2 },
+            { id: 96, q: "'1962 मोबाइल पशु चिकित्सा इकाई व्यवस्था' के मॉडल के अध्ययन के लिए किस अंतरराष्ट्रीय संस्था को अधिकृत किया गया है?", options: ["विश्व बैंक", "एशियाई विकास बैंक", "विश्व स्वास्थ्य संगठन", "न्यू डेवलपमेंट बैंक"], ans: 1 },
+            { id: 97, q: "हाल ही में जयपुर में आयोजित 'विदेश संपर्क-स्टेट आउटरीच कॉन्फ्रेंस' का मुख्य विषय क्या था?", options: ["सुरक्षित भारत, सुरक्षित राजस्थानी", "राजस्थानी विदेश सुरक्षित जाएं, प्रशिक्षित जाएं", "निवेश के लिए पधारो म्हारे देस", "प्रवासी राजस्थानीः हमारी ताकत-भविष्य"], ans: 1 },
+            { id: 98, q: "राजस्थान में डिजिटल शिक्षा को मजबूत करने, एआई और पर्सनलाइज्ड एडेप्टिव लर्निंग को बढ़ावा देने के लिए हाल ही में शिक्षा विभाग ने किस संस्था के साथ एमओयू किया?", options: ["वेदांता फाउंडेशन", "अजीम प्रेमजी फाउंडेशन", "पिरामल फाउंडेशन", "प्रथम एजुकेशन फाउंडेशन"], ans: 2 },
+            { id: 99, q: "प्रधानमंत्री नरेन्द्र मोदी द्वारा हाल ही में राष्ट्र को समर्पित 75 पुनर्विकसित 'अमृत स्टेशनों' में राजस्थान के कितने स्टेशन शामिल हैं?", options: ["10 स्टेशन", "8 स्टेशन", "5 स्टेशन", "4 स्टेशन"], ans: 2 },
+            { id: 100, q: "पंच गौरव योजना में 'एक जिला-एक उत्पाद' के तहत बालोतरा जिले का उत्पाद कौन सा है?", options: ["येलो स्टोन के उत्पाद", "मार्बल के उत्पाद", "लकड़ी के फर्नीचर", "टेक्सटाइल उत्पाद"], ans: 3 },
+            { id: 101, q: "राजस्थान में पहली बार 'विदेश संपर्क- स्टेट आउटरीच कॉन्फ्रेंस' का आयोजन हाल ही में कहां किया गया?", options: ["जयपुर", "जोधपुर", "अजमेर", "उदयपुर"], ans: 0 },
+            { id: 102, q: "राजस्थान कृषि विभाग ने कृषि यंत्रीकरण को बढ़ावा देने और छोटे-सीमांत किसानों को किराए पर आधुनिक कृषि यंत्र उपलब्ध कराने के लिए किसके साथ समझौता ज्ञापन किया है?", options: ["महिंद्रा एग्री सॉल्यूशंस", "जॉन डियर किसान सेवा", "टैफे-जेफार्म सर्विसेज", "इफको ई-बाजार"], ans: 2 },
+            { id: 103, q: "प्रधानमंत्री ने हाल ही में 75 पुनर्विकसित 'अमृत स्टेशन' राष्ट्र को समर्पित किए, इस कार्यक्रम में मुख्यमंत्री भजनलाल शर्मा किस स्टेशन से वर्चुअली जुड़े?", options: ["जयपुर", "गोटन", "गंगापुर सिटी", "डीग"], ans: 1 },
+            { id: 104, q: "'रैक्सको' (REXCO) का मुख्य रूप से संबंध किस क्षेत्र से है?", options: ["नवीकरणीय ऊर्जा विकास", "पूर्व सैनिकों के कल्याण और रोजगार", "कृषि विपणन और जैविक खेती", "अंतरराष्ट्रीय सीमावर्ती क्षेत्रों में सड़क निर्माण"], ans: 1 },
+            { id: 105, q: "पंच गौरव कार्यक्रम में 'एक जिला-एक उत्पाद' के तहत जैसलमेर जिले का उत्पाद कौन सा है?", options: ["येलो स्टोन के उत्पाद", "सोनामुखी के उत्पाद", "ग्रेनाईट के उत्पाद", "कशीदाकारी"], ans: 0 },
+            { id: 106, q: "राजस्थान के किसानों को निर्बाध रूप से डिजिटल सेवाएं उपलब्ध कराने के लिए 'जेफार्म सर्विसेज' के डिजिटल प्लेटफॉर्म को राज्य सरकार के किस पोर्टल के साथ एकीकृत किया जाएगा?", options: ["राज किसान साथी पोर्टल", "जन सूचना पोर्टल", "ई-मित्र प्लस", "राजस्थान किसान सुविधा"], ans: 0 },
+            { id: 107, q: "समेकित बाल विकास सेवा राजस्थान द्वारा संचालित 'ईसीसीई कार्यक्रम' का मुख्य उद्देश्य किस आयु वर्ग के बच्चों के लिए गुणवत्तापूर्ण शिक्षा एवं देखरेख सुनिश्चित करना है?", options: ["0 से 3 वर्ष", "3 से 6 वर्ष", "6 से 14 वर्ष", "3 से 8 वर्ष"], ans: 1 },
+            { id: 108, q: "प्रधानमंत्री नरेन्द्र मोदी ने हाल ही में देशभर के 75 पुनर्विकसित 'अमृत स्टेशनों' का लोकार्पण किस स्थान से किया?", options: ["नई दिल्ली", "गोटन (राजस्थान)", "जालंधर (पंजाब)", "जयपुर (राजस्थान)"], ans: 2 },
+            { id: 109, q: "साइबर अपराधों की तुरंत शिकायत दर्ज करवाने के लिए कौन-सा हेल्पलाइन नंबर संचालित किया जा रहा है?", options: ["1090", "1930", "181", "112"], ans: 1 },
+            { id: 110, q: "पंच गौरव कार्यक्रम में 'एक जिला-एक उत्पाद' के तहत जालौर जिले का उत्पाद कौन सा है?", options: ["लकड़ी के फर्नीचर", "मार्बल के उत्पाद", "ग्रेनाईट के उत्पाद", "टेक्सटाईल के उत्पाद"], ans: 2 },
+            { id: 111, q: "राज्य बजट 2026-27 में 'राजस्थान साइबर क्राइम कन्ट्रोल सेंटर' की स्थापना के लिए कितनी राशि का प्रावधान किया गया है?", options: ["50 करोड़ रुपये", "100 करोड़ रुपये", "150 करोड़ रुपये", "200 करोड़ रुपये"], ans: 1 },
+            { id: 112, q: "राजस्थान सरकार द्वारा पशुपालकों को आर्थिक सुरक्षा प्रदान करने के लिए कौन-सी पशु बीमा योजना चलाई जा रही है?", options: ["मुख्यमंत्री मंगला पशु बीमा योजना", "मुख्यमंत्री कामधेनु पशु बीमा योजना", "राजस्थान पशुधन सुरक्षा योजना", "मुख्यमंत्री अमृत पशु बीमा योजना"], ans: 0 },
+            { id: 113, q: "भारत सरकार द्वारा 'जल जीवन मिशन' की अवधि को बढ़ाकर कब तक कर दिया गया है?", options: ["दिसम्बर 2026", "दिसम्बर 2027", "दिसम्बर 2028", "मार्च 2030"], ans: 2 },
+            { id: 114, q: "जल जीवन मिशन 2.0 के तहत राजस्थान में संचालित परियोजनाओं में केंद्र और राज्य सरकार की वित्तीय भागीदारी का अनुपात क्या है?", options: ["60:40", "75:25", "90:10", "50:50"], ans: 3 },
+            { id: 115, q: "पंच गौरव कार्यक्रम में 'एक जिला-एक उत्पाद' के तहत जोधपुर जिले का उत्पाद कौन सा है?", options: ["टेक्सटाइल उत्पाद", "लकड़ी के फर्नीचर", "ऑटोमोबाइल पार्ट्स", "सोनामुखी के उत्पाद"], ans: 1 },
+            { id: 116, q: "राजस्थान सरकार द्वारा डेयरी के माध्यम से दूध बेचने वाले पशुपालकों को प्रति लीटर कितने रुपये का अनुदान प्रदान किया जा रहा है?", options: ["2 रुपये", "3 रुपये", "4 रुपये", "5 रुपये"], ans: 3 },
+            { id: 117, q: "प्रदेश में 'इंटरनेशनल वेडिंग एंड टूरिज्म कॉन्क्लेव' का आयोजन 19 जुलाई 2026 को किस जिले में हुआ?", options: ["सवाई माधोपुर", "जयपुर", "अजमेर", "सिरोही"], ans: 1 },
+            { id: 118, q: "राजस्थान सरकार द्वारा गर्भवती महिलाओं को निःशुल्क सोनोग्राफी जैसी सेवाएं उपलब्ध करवाने के लिए कौन-सी योजना शुरू की गई है?", options: ["मुख्यमंत्री सुरक्षित मातृत्व योजना", "जननी सुरक्षा योजना", "मा वाउचर योजना", "मुख्यमंत्री लाडो योजना"], ans: 2 },
+            { id: 119, q: "हाल ही में नीति आयोग द्वारा जारी 'निवेश अनुकूलता सूचकांक' की समग्र रैंकिंग में राजस्थान को देशभर में कौन-सा स्थान प्राप्त हुआ है?", options: ["5वां", "8वां", "10वां", "12वां"], ans: 2 },
+            { id: 120, q: "पंच गौरव कार्यक्रम में 'एक जिला-एक उत्पाद' के तहत सिरोही जिले का उत्पाद कौन सा है?", options: ["ग्रेनाईट के उत्पाद", "मार्बल के उत्पाद", "ऑटोमोबाईल पार्ट्स", "कशीदाकारी"], ans: 1 },
+            { id: 121, q: "'विश्वकर्मा उद्यमी योजना' के तहत उद्योग स्थापित करने के लिए कितने रुपये तक का ऋण उपलब्ध करवाया जा रहा है?", options: ["5 लाख रुपये", "10 लाख रुपये", "15 लाख रुपये", "25 लाख रुपये"], ans: 1 },
+            { id: 122, q: "जल जीवन मिशन 2.0 के तहत स्वीकृत सभी संपत्तियों की जियो-टैगिंग और नियमित प्रगति की मॉनिटरिंग किस डिजिटल प्लेटफॉर्म पर की जाएगी?", options: ["सुजलम भारत प्लेटफॉर्म", "ई-जलशक्ति पोर्टल", "जल दर्पण ऐप", "राजस्थान हर घर जल पोर्टल"], ans: 0 },
+            { id: 123, q: "राजस्थान के पर्यटन क्षेत्रों और उनकी विशेषताओं के संदर्भ में कौन-सा युग्म गलत सुमेलित है?", options: ["शेखावाटी : हवेलियां", "जैसलमेर : रेगिस्तान", "बांसवाड़ा-डूंगरपुरः प्राकृतिक सुंदरता", "भरतपुर : धार्मिक आभा"], ans: 3 },
+            { id: 124, q: "राज्य में उद्योगों की स्थापना और निवेशकों को समयबद्ध सेवाएं उपलब्ध कराने के लिए बनाए गए 'राज निवेश पोर्टल' पर वर्तमान में कितने विभागों की सेवाएं उपलब्ध हैं?", options: ["12 विभागों की", "15 विभागों की", "18 विभागों की", "20 विभागों की"], ans: 1 },
+            { id: 125, q: "पंच गौरव कार्यक्रम में 'एक जिला-एक उत्पाद' के तहत पाली जिले का उत्पाद कौन सा है?", options: ["टेक्सटाइल के उत्पाद", "ग्रेनाईट के उत्पाद", "कशीदाकारी", "येलो स्टोन के उत्पाद"], ans: 0 },
+            { id: 126, q: "जल जीवन मिशन 2.0 के तहत वित्तीय वर्ष 2026-27 के लिए केंद्र सरकार द्वारा राजस्थान को कितनी केंद्रीय सहायता राशि स्वीकृत की गई है?", options: ["307 करोड़ रुपये", "537 करोड़ रुपये", "713 करोड़ रुपये", "1,050 करोड़ रुपये"], ans: 1 },
+            { id: 127, q: "प्रदेश के किस संस्थान को एम्स नई दिल्ली की तर्ज पर 'राजस्थान इंस्टीट्यूट ऑफ मेडिकल साइंसेज' के रूप में विकसित किया जा रहा है?", options: ["एसएमएस मेडिकल कॉलेज जयपुर", "आरयूएचएस जयपुर", "एसएन मेडिकल कॉलेज जोधपुर", "आरएनटी मेडिकल कॉलेज उदयपुर"], ans: 1 },
+            { id: 128, q: "हाल ही के आँकड़ो के अनुसार, देश में 'नेशनल हाई-स्पीड कॉरिडोर' और 'ग्रीनफील्ड एक्सप्रेसवे' के निर्माण से सबसे अधिक लाभान्वित होने वाला राज्य कौन-सा है?", options: ["उत्तर प्रदेश", "महाराष्ट्र", "मध्य प्रदेश", "राजस्थान"], ans: 3 },
+            { id: 129, q: "राजस्थान सरकार द्वारा सक्षम लोगों को स्वेच्छा से राष्ट्रीय खाद्य सुरक्षा का लाभ छोड़ने के लिए प्रेरित करने हेतु कौन-सा अभियान चलाया गया?", options: ["अन्नपूर्णा त्याग अभियान", "गिव अप अभियान", "नो फूड वेस्ट अभियान", "खाद्य सुरक्षा समर्पण अभियान"], ans: 1 },
+            { id: 130, q: "पंच गौरव कार्यक्रम में 'एक जिला-एक उत्पाद' के तहत फलौदी जिले का उत्पाद कौन सा है?", options: ["मार्बल के उत्पाद", "लकड़ी के फर्नीचर", "सोनामुखी के उत्पाद", "टेक्सटाईल उत्पाद"], ans: 2 },
+            { id: 131, q: "राजस्थान निवेश प्रोत्साहन योजना के तहत राज्य सरकार द्वारा उद्योगों को निम्नलिखित में से कौन-से परिलाभ-अनुदान प्रदान किए जाते हैं?", options: ["एसेट क्रिएशन इन्सेन्टिव", "थ्रस्ट बूस्टर एवं ब्याज अनुदान", "विद्युत शुल्क में छूट एवं ग्रीन इन्सेन्टिव", "उपर्युक्त सभी"], ans: 3 },
+            { id: 132, q: "राजस्थान के 'गिव अप अभियान' के तहत लगभग कितने सक्षम लोगों ने स्वेच्छा से अपना खाद्य सुरक्षा अधिकार छोड़ा?", options: ["55 लाख", "72 लाख", "93 लाख", "1.16 करोड़"], ans: 2 },
+            { id: 133, q: "जयपुर विकास प्राधिकरण द्वारा गुलाबी नगरी के तीन प्रमुख प्रवेश मार्गों पर बनाए जाने वाले भव्य स्वागत द्वार किस थीम पर आधारित होंगे?", options: ["हेरिटेज टू मॉडर्न", "वेस्ट टू आर्ट", "ग्रीन एंड क्लीन जयपुर", "स्मार्ट सिटी विजन"], ans: 1 },
+            { id: 134, q: "'मा योजना' के तहत यदि कोई मरीज राज्य से बाहर अंग प्रत्यारोपण कराना चाहता है, तो उसे पूर्व अनुमति किससे लेनी होती है?", options: ["राजस्थान स्टेट हेल्थ एश्योरेंस एजेंसी", "जिला चिकित्सा महाविद्यालय की ट्रांसप्लांट इवैल्यूएशन कमेटी", "राज्य स्तरीय मेडिकल बोर्ड (जयपुर)", "मुख्य चिकित्सा एवं स्वास्थ्य अधिकारी"], ans: 1 },
+            { id: 135, q: "पंच गौरव कार्यक्रम में 'एक जिला-एक उत्पाद' के तहत बारां जिले का उत्पाद कौन सा है?", options: ["गार्लिक प्रोडक्ट", "सेण्ड स्टोन", "कोटा डोरिया", "क्वार्ट्ज"], ans: 0 },
+            { id: 136, q: "मुख्यमंत्री भजनलाल शर्मा के निर्देश पर राजस्थान में 'गिव अप अभियान' का शुभारंभ कब किया गया था?", options: ["15 अगस्त, 2024", "2 अक्टूबर, 2024", "1 नवम्बर, 2024", "26 जनवरी, 2025"], ans: 2 },
+            { id: 137, q: "राजस्थान में उद्योगों की स्थापना को सुगम बनाने के लिए सरकार द्वारा 'लैंड यूज चेंज' की समय-सीमा घटाकर कितनी कर दी गई है?", options: ["15 दिन", "30 दिन", "45 दिन", "60 दिन"], ans: 1 },
+            { id: 138, q: "मा योजना के तहत राज्य के बाहर इलाज कराने पर मरीज के पात्र चिकित्सा खर्च का पुनर्भरण किस नोडल एजेंसी द्वारा किया जाता है?", options: ["राष्ट्रीय स्वास्थ्य मिशन, राजस्थान", "राजस्थान स्टेट हेल्थ एश्योरेंस एजेंसी", "चिकित्सा एवं स्वास्थ्य निदेशालय, जयपुर", "मुख्यमंत्री सहायता कोष"], ans: 1 },
+            { id: 139, q: "प्रदेश में जल संरक्षण को जन-आंदोलन बनाने के लिए भामाशाहों, प्रवासी राजस्थानियों तथा सीएसआर के सहयोग से जल संरक्षण संरचनाओं का निर्माण किस अभियान के तहत करवाया जा रहा है?", options: ["कर्मभूमि से मातृभूमि अभियान", "वंदे गंगा जन अभियान", "कैच द रेन - राजस्थान", "मुख्यमंत्री जल स्वावलंबन अभियान"], ans: 0 },
+            { id: 140, q: "पंच गौरव कार्यक्रम में 'एक जिला- एक उत्पाद' के तहत बून्दी जिले का उत्पाद कौन सा है?", options: ["थेवा आभूषण", "गार्लिक प्रोडक्ट", "सेण्ड स्टोन", "मार्बल के उत्पाद"], ans: 2 },
+            { id: 141, q: "विश्व स्वास्थ्य संगठन द्वारा तंबाकू नियंत्रण के उत्कृष्ट कार्यों के लिए 'विश्व तंबाकू निषेध दिवस अवार्ड-2026' में राजस्थान को किस क्षेत्र में प्रथम स्थान मिला है?", options: ["वैश्विक स्तर पर", "दक्षिण एशिया क्षेत्र", "दक्षिण-पूर्व एशिया क्षेत्र", "पश्चिमी प्रशांत क्षेत्र"], ans: 2 },
+            { id: 142, q: "राजस्थान में उद्योग-अनुकूल नीतियों के परिणामस्वरूप अब तक लगभग कितने रुपये से अधिक की निवेश परियोजनाओं की ग्राउंड ब्रेकिंग की जा चुकी है?", options: ["2 लाख करोड़ रुपये", "5 लाख करोड़ रुपये", "8 लाख करोड़ रुपये", "10 लाख करोड़ रुपये"], ans: 1 },
+            { id: 143, q: "'रामजल सेतु लिंक परियोजना' से प्रदेश के कितने जिलों में पेयजल सुरक्षा सुनिश्चित होगी?", options: ["13 जिलों में", "17 जिलों में", "21 जिलों में", "25 जिलों में"], ans: 1 },
+            { id: 144, q: "हाल ही में (जुलाई 2026) मुख्यमंत्री भजनलाल शर्मा ने सार्वजनिक परिवहन सेवा के विस्तार के लिए कहां से रोडवेज की 144 नई बसों को हरी झंडी दिखाकर रवाना किया?", options: ["अजमेर", "डीग", "बीकानेर", "जयपुर"], ans: 3 },
+            { id: 145, q: "पंच गौरव कार्यक्रम में 'एक जिला-एक उत्पाद' के तहत झालावाड़ जिले का उत्पाद कौन सा है?", options: ["कोटा स्टोन के उत्पाद", "मार्बल के उत्पाद", "गार्लिक प्रोडक्ट", "कोटा डोरिया"], ans: 0 },
+            { id: 146, q: "हाड़ौती क्षेत्र की किस बहुउद्देशीय सिंचाई परियोजना को 'कोटा, बारां और झालावाड़' जिलों की जीवनरेखा माना गया है?", options: ["चंबल सिंचाई परियोजना", "कालीसिंध बांध परियोजना", "नवनेरा बैराज", "परवन बहुउद्देशीय सिंचाई परियोजना"], ans: 3 },
+            { id: 147, q: "सड़क निर्माण के क्षेत्र में उत्कृष्ट प्रदर्शन के लिए राजस्थान को देश में कौन सा स्थान प्राप्त हुआ है?", options: ["प्रथम", "द्वितीय", "तृतीय", "चतुर्थ"], ans: 0 },
+            { id: 148, q: "'भारत टैक्सी' किस मॉडल पर आधारित मोबिलिटी प्लेटफॉर्म है?", options: ["पब्लिक प्राइवेट पार्टनरशिप", "सहकारिता आधारित स्वामित्व मॉडल", "पूर्णतः सरकारी नियंत्रण मॉडल", "विदेशी प्रत्यक्ष निवेश मॉडल"], ans: 1 },
+            { id: 149, q: "टेलीमेडिसिन सेवा का क्या नाम है, जिसके जरिए मरीज, विशेषज्ञ चिकित्सकों से ऑनलाइन परामर्श ले रहे हैं?", options: ["ई-आरोग्य", "ई-संजीवनी", "ई-सुश्रुत", "ई-चिकित्सा"], ans: 1 },
+            { id: 150, q: "पंच गौरव कार्यक्रम में 'एक जिला-एक उत्पाद' के तहत कोटा जिले का उत्पाद कौन सा है?", options: ["क्वार्ट्ज", "कोटा डोरिया", "सेण्ड स्टोन", "थेवा आभूषण"], ans: 1 }
+        ];
+
+        // --- APP STATE CONTROLLER ---
+        class SujasExamApp {
+            constructor() {
+                this.user = JSON.parse(localStorage.getItem('sujas_user')) || null;
+                this.bookmarks = JSON.parse(localStorage.getItem('sujas_bookmarks')) || [];
+                this.history = JSON.parse(localStorage.getItem('sujas_history')) || [];
+                this.isSoundOn = localStorage.getItem('sujas_sound') !== 'false';
+                
+                this.currentMode = 'exam'; // 'exam', 'practice', 'bookmark'
+                this.activeQuestions = [...QUESTIONS_DATA];
+                this.currentIndex = 0;
+                this.userAnswers = {}; // { qId: selectedOptionIndex }
+                this.markedReview = new Set();
+                
+                this.timerInterval = null;
+                this.timeLeft = 120 * 60; // 120 minutes in seconds
+
+                this.avatars = [
+                    'fa-user-astronaut', 'fa-user-ninja', 'fa-user-tie', 
+                    'fa-user-graduate', 'fa-user-doctor', 'fa-shield-halved'
+                ];
+                this.selectedAvatar = this.avatars[3];
+
+                this.initAudio();
+            }
+
+            initAudio() {
+                // Audio Synthesis / Web Audio FX
+                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            playBeep(type = 'click') {
+                if (!this.isSoundOn || !this.audioCtx) return;
+                try {
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+
+                    if (type === 'click') {
+                        osc.frequency.value = 600;
+                        gain.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
+                        osc.start();
+                        osc.stop(this.audioCtx.currentTime + 0.05);
+                    } else if (type === 'success') {
+                        osc.frequency.setValueAtTime(400, this.audioCtx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(800, this.audioCtx.currentTime + 0.2);
+                        gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+                        osc.start();
+                        osc.stop(this.audioCtx.currentTime + 0.2);
+                    }
+                } catch(e) {}
+            }
+
+            init() {
+                this.renderUserHeader();
+                this.renderAvatarSelector();
+                this.updateBookmarkCount();
+                this.renderLeaderboard();
+                
+                if (!this.user) {
+                    this.navTo('login');
+                } else {
+                    this.navTo('home');
+                }
+            }
+
+            toggleSound() {
+                this.isSoundOn = !this.isSoundOn;
+                localStorage.setItem('sujas_sound', this.isSoundOn);
+                const icon = document.getElementById('soundIcon');
+                if (this.isSoundOn) {
+                    icon.className = 'fa-solid fa-volume-high';
+                } else {
+                    icon.className = 'fa-solid fa-volume-xmark';
+                }
+            }
+
+            toggleDarkMode() {
+                document.documentElement.classList.toggle('dark');
+            }
+
+            renderAvatarSelector() {
+                const container = document.getElementById('avatarSelector');
+                if(!container) return;
+                container.innerHTML = this.avatars.map(av => `
+                    <button type="button" onclick="app.selectAvatar('${av}')" class="p-2.5 rounded-xl border-2 ${this.selectedAvatar === av ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600' : 'border-gray-200 dark:border-gray-700'} text-xl transition">
+                        <i class="fa-solid ${av}"></i>
+                    </button>
+                `).join('');
+            }
+
+            selectAvatar(av) {
+                this.selectedAvatar = av;
+                this.renderAvatarSelector();
+            }
+
+            handleLogin(e) {
+                e.preventDefault();
+                const name = document.getElementById('loginName').value.trim();
+                const roll = document.getElementById('loginRoll').value.trim() || 'CA-2026';
+                if (!name) return;
+
+                this.user = { name, roll, avatar: this.selectedAvatar };
+                localStorage.setItem('sujas_user', JSON.stringify(this.user));
+                this.renderUserHeader();
+                this.navTo('home');
+                this.playBeep('success');
+            }
+
+            logout() {
+                this.user = null;
+                localStorage.removeItem('sujas_user');
+                this.renderUserHeader();
+                this.navTo('login');
+            }
+
+            renderUserHeader() {
+                const area = document.getElementById('userHeaderArea');
+                if (!area) return;
+                if (this.user) {
+                    area.innerHTML = `
+                        <div class="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-xl text-xs font-semibold">
+                            <i class="fa-solid ${this.user.avatar} text-emerald-500 text-sm"></i>
+                            <span class="max-w-[100px] truncate">${this.user.name}</span>
+                            <button onclick="app.logout()" class="text-gray-400 hover:text-red-500 ml-1" title="Logout">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    area.innerHTML = `
+                        <button onclick="app.navTo('login')" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition">
+                            लॉगिन करें
+                        </button>
+                    `;
+                }
+            }
+
+            navTo(viewName) {
+                ['viewLogin', 'viewHome', 'viewQuiz', 'viewResult'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('hidden');
+                });
+
+                if (viewName === 'login') document.getElementById('viewLogin').classList.remove('hidden');
+                if (viewName === 'home') {
+                    document.getElementById('viewHome').classList.remove('hidden');
+                    this.updateBookmarkCount();
+                    this.renderLeaderboard();
+                }
+                if (viewName === 'quiz') document.getElementById('viewQuiz').classList.remove('hidden');
+                if (viewName === 'result') document.getElementById('viewResult').classList.remove('hidden');
+            }
+
+            updateBookmarkCount() {
+                const el = document.getElementById('homeBookmarkCount');
+                if(el) el.innerText = `${this.bookmarks.length} प्रश्न`;
+            }
+
+            startQuiz(mode = 'exam') {
+                if (!this.user) {
+                    alert('कृपया क्विज़ शुरू करने से पहले लॉगिन करें!');
+                    this.navTo('login');
+                    return;
+                }
+
+                this.currentMode = mode;
+                this.userAnswers = {};
+                this.markedReview.clear();
+                this.currentIndex = 0;
+
+                if (mode === 'bookmark') {
+                    if (this.bookmarks.length === 0) {
+                        alert('कोई बुकमार्क प्रश्न नहीं मिला! मुख्य प्रश्नोत्तरी में बुकमार्क आइकन दबाकर प्रश्न जोड़ें।');
+                        return;
+                    }
+                    this.activeQuestions = QUESTIONS_DATA.filter(q => this.bookmarks.includes(q.id));
+                } else {
+                    this.activeQuestions = [...QUESTIONS_DATA];
+                }
+
+                // Mode Setup
+                const badge = document.getElementById('modeBadge');
+                const timerCont = document.getElementById('timerContainer');
+
+                if (mode === 'exam') {
+                    badge.innerText = "Exam Mode (Strict)";
+                    badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase bg-red-100 text-red-700 dark:bg-red-900/60 dark:text-red-300";
+                    timerCont.classList.remove('hidden');
+                    this.timeLeft = 120 * 60; // 2 hours
+                    this.startTimer();
+                } else if (mode === 'practice') {
+                    badge.innerText = "Practice Mode";
+                    badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300";
+                    timerCont.classList.add('hidden');
+                    this.stopTimer();
+                } else {
+                    badge.innerText = "Bookmark Mode";
+                    badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300";
+                    timerCont.classList.add('hidden');
+                    this.stopTimer();
+                }
+
+                document.getElementById('qTotalNum').innerText = this.activeQuestions.length;
+                this.renderQuestionGrid();
+                this.renderCurrentQuestion();
+                this.navTo('quiz');
+            }
+
+            startTimer() {
+                this.stopTimer();
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    const hours = Math.floor(this.timeLeft / 3600);
+                    const minutes = Math.floor((this.timeLeft % 3600) / 60);
+                    const seconds = this.timeLeft % 60;
+
+                    document.getElementById('timerDisplay').innerText = 
+                        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                    if (this.timeLeft <= 0) {
+                        this.stopTimer();
+                        alert('समय समाप्त हो गया है! आपका उत्तर स्वतः सबमिट किया जा रहा है।');
+                        this.evaluateQuiz();
+                    }
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+            }
+
+            renderQuestionGrid() {
+                const grid = document.getElementById('questionGrid');
+                if(!grid) return;
+                grid.innerHTML = this.activeQuestions.map((q, idx) => {
+                    let btnClass = "bg-gray-100 dark:bg-gray-700/60 text-gray-700 dark:text-gray-300";
+                    if (this.userAnswers[q.id] !== undefined) {
+                        btnClass = "bg-emerald-500 text-white font-bold";
+                    } else if (this.markedReview.has(q.id)) {
+                        btnClass = "bg-amber-500 text-white font-bold";
+                    }
+
+                    if (idx === this.currentIndex) {
+                        btnClass += " ring-2 ring-emerald-500 ring-offset-2 dark:ring-offset-gray-800";
+                    }
+
+                    return `
+                        <button onclick="app.jumpToQuestion(${idx})" class="w-full h-8 text-xs font-semibold rounded-lg flex items-center justify-center transition ${btnClass}">
+                            ${idx + 1}
+                        </button>
+                    `;
+                }).join('');
+            }
+
+            renderCurrentQuestion() {
+                const q = this.activeQuestions[this.currentIndex];
+                if (!q) return;
+
+                document.getElementById('qCurrentNum').innerText = this.currentIndex + 1;
+                document.getElementById('qCardNum').innerText = q.id;
+                document.getElementById('qText').innerText = `${q.id}. ${q.q}`;
+
+                // Options
+                const optsContainer = document.getElementById('qOptions');
+                const selectedOpt = this.userAnswers[q.id];
+
+                optsContainer.innerHTML = q.options.map((opt, oIdx) => {
+                    const optionLetter = String.fromCharCode(65 + oIdx); // A, B, C, D
+                    let optStyle = "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 hover:bg-emerald-50 dark:hover:bg-emerald-950/20";
+                    
+                    if (selectedOpt === oIdx) {
+                        optStyle = "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200 font-semibold ring-1 ring-emerald-500";
+                    }
+
+                    // In Practice Mode, reveal answer immediately if selected
+                    if (this.currentMode === 'practice' && selectedOpt !== undefined) {
+                        if (oIdx === q.ans) {
+                            optStyle = "border-green-500 bg-green-100 dark:bg-green-950/60 text-green-900 dark:text-green-200 font-bold";
+                        } else if (selectedOpt === oIdx && selectedOpt !== q.ans) {
+                            optStyle = "border-red-500 bg-red-100 dark:bg-red-950/60 text-red-900 dark:text-red-200 font-bold";
+                        }
+                    }
+
+                    return `
+                        <button onclick="app.selectOption(${oIdx})" class="w-full text-left p-4 rounded-xl border ${optStyle} transition flex items-center space-x-3">
+                            <span class="w-7 h-7 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                ${optionLetter}
+                            </span>
+                            <span class="text-sm sm:text-base leading-snug">${opt}</span>
+                        </button>
+                    `;
+                }).join('');
+
+                // Explanation Box in Practice Mode
+                const expBox = document.getElementById('explanationBox');
+                if (this.currentMode === 'practice' && selectedOpt !== undefined) {
+                    expBox.classList.remove('hidden');
+                    document.getElementById('explanationText').innerText = `सही विकल्प: (${String.fromCharCode(65 + q.ans)}) ${q.options[q.ans]}`;
+                } else {
+                    expBox.classList.add('hidden');
+                }
+
+                // Bookmark state icon
+                const bmBtn = document.getElementById('btnBookmark');
+                const isBookmarked = this.bookmarks.includes(q.id);
+                bmBtn.innerHTML = isBookmarked ? 
+                    `<i class="fa-solid fa-bookmark text-emerald-500"></i> <span>सहेजा गया</span>` : 
+                    `<i class="fa-regular fa-bookmark"></i> <span>बुकमार्क</span>`;
+
+                this.renderQuestionGrid();
+            }
+
+            selectOption(optIdx) {
+                const q = this.activeQuestions[this.currentIndex];
+                this.userAnswers[q.id] = optIdx;
+                this.playBeep('click');
+                this.renderCurrentQuestion();
+            }
+
+            clearCurrentResponse() {
+                const q = this.activeQuestions[this.currentIndex];
+                delete this.userAnswers[q.id];
+                this.renderCurrentQuestion();
+            }
+
+            toggleMarkForReview() {
+                const q = this.activeQuestions[this.currentIndex];
+                if (this.markedReview.has(q.id)) {
+                    this.markedReview.delete(q.id);
+                } else {
+                    this.markedReview.add(q.id);
+                }
+                this.renderCurrentQuestion();
+            }
+
+            toggleBookmarkCurrent() {
+                const q = this.activeQuestions[this.currentIndex];
+                const index = this.bookmarks.indexOf(q.id);
+                if (index > -1) {
+                    this.bookmarks.splice(index, 1);
+                } else {
+                    this.bookmarks.push(q.id);
+                }
+                localStorage.setItem('sujas_bookmarks', JSON.stringify(this.bookmarks));
+                this.renderCurrentQuestion();
+            }
+
+            prevQuestion() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.renderCurrentQuestion();
+                }
+            }
+
+            nextQuestion() {
+                if (this.currentIndex < this.activeQuestions.length - 1) {
+                    this.currentIndex++;
+                    this.renderCurrentQuestion();
+                }
+            }
+
+            jumpToQuestion(index) {
+                this.currentIndex = index;
+                this.renderCurrentQuestion();
+            }
+
+            jumpToQuestionNum(num) {
+                const n = parseInt(num);
+                if (n >= 1 && n <= this.activeQuestions.length) {
+                    this.currentIndex = n - 1;
+                    this.renderCurrentQuestion();
+                }
+            }
+
+            confirmSubmitQuiz() {
+                const attempted = Object.keys(this.userAnswers).length;
+                const total = this.activeQuestions.length;
+                if (confirm(`क्या आप टेस्ट सबमिट करना चाहते हैं?\n\nकुल प्रश्न: ${total}\nउत्तर दिए: ${attempted}\nशेष: ${total - attempted}`)) {
+                    this.evaluateQuiz();
+                }
+            }
+
+            evaluateQuiz() {
+                this.stopTimer();
+                let correctCount = 0;
+                let wrongCount = 0;
+                let skippedCount = 0;
+
+                this.activeQuestions.forEach(q => {
+                    const userAns = this.userAnswers[q.id];
+                    if (userAns === undefined) {
+                        skippedCount++;
+                    } else if (userAns === q.ans) {
+                        correctCount++;
+                    } else {
+                        wrongCount++;
+                    }
+                });
+
+                // Calculate Score (+1 correct, -0.33 wrong)
+                const score = (correctCount * 1 - wrongCount * 0.33).toFixed(2);
+                const accuracy = attemptedCount() > 0 ? Math.round((correctCount / attemptedCount()) * 100) : 0;
+
+                function attemptedCount() { return correctCount + wrongCount; }
+
+                // Update UI
+                document.getElementById('resScore').innerText = score;
+                document.getElementById('resAccuracy').innerText = `${accuracy}%`;
+                document.getElementById('resCorrect').innerText = correctCount;
+                document.getElementById('resWrong').innerText = `${wrongCount} / ${skippedCount}`;
+
+                // Save to history
+                const resultObj = {
+                    date: new Date().toLocaleDateString('hi-IN'),
+                    name: this.user.name,
+                    mode: this.currentMode.toUpperCase(),
+                    score: score,
+                    accuracy: `${accuracy}%`,
+                    status: score > 50 ? 'Pass' : 'Needs Practice'
+                };
+                this.history.unshift(resultObj);
+                localStorage.setItem('sujas_history', JSON.stringify(this.history.slice(0, 10)));
+
+                // Confetti FX on high score
+                if (score > 30 && typeof confetti === 'function') {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }
+
+                this.renderResultChart(correctCount, wrongCount, skippedCount);
+                this.filterReview('all');
+                this.navTo('result');
+            }
+
+            renderResultChart(correct, wrong, skipped) {
+                const ctx = document.getElementById('resultChart').getContext('2d');
+                if (window.myResultChart) window.myResultChart.destroy();
+
+                window.myResultChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['सही (Correct)', 'गलत (Incorrect)', 'छूटे (Skipped)'],
+                        datasets: [{
+                            data: [correct, wrong, skipped],
+                            backgroundColor: ['#22c55e', '#ef4444', '#9ca3af']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+
+            filterReview(type = 'all') {
+                const list = document.getElementById('reviewQuestionsList');
+                if(!list) return;
+
+                let filtered = this.activeQuestions;
+                if (type === 'correct') {
+                    filtered = this.activeQuestions.filter(q => this.userAnswers[q.id] === q.ans);
+                } else if (type === 'wrong') {
+                    filtered = this.activeQuestions.filter(q => this.userAnswers[q.id] !== undefined && this.userAnswers[q.id] !== q.ans);
+                } else if (type === 'skipped') {
+                    filtered = this.activeQuestions.filter(q => this.userAnswers[q.id] === undefined);
+                }
+
+                list.innerHTML = filtered.map(q => {
+                    const userAns = this.userAnswers[q.id];
+                    const isCorrect = userAns === q.ans;
+                    const isSkipped = userAns === undefined;
+
+                    let statusBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700">सही</span>`;
+                    if (isSkipped) statusBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-gray-100 text-gray-600">छूटा</span>`;
+                    else if (!isCorrect) statusBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700">गलत</span>`;
+
+                    return `
+                        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30 space-y-2">
+                            <div class="flex justify-between items-start">
+                                <span class="font-bold text-sm text-emerald-600 dark:text-emerald-400">प्रश्न #${q.id}</span>
+                                ${statusBadge}
+                            </div>
+                            <p class="font-semibold text-sm">${q.q}</p>
+                            <div class="text-xs space-y-1 mt-2">
+                                <p class="text-gray-500">आपका उत्तर: <span class="font-bold text-gray-800 dark:text-gray-200">${userAns !== undefined ? q.options[userAns] : 'कोई उत्तर नहीं दिया'}</span></p>
+                                <p class="text-green-600 dark:text-green-400 font-bold">सही उत्तर: ${q.options[q.ans]}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderLeaderboard() {
+                const tbody = document.getElementById('leaderboardBody');
+                if(!tbody) return;
+                if (this.history.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">अभी कोई परिणाम रिकॉर्ड नहीं हुआ है।</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = this.history.map(row => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                        <td class="p-3 font-mono text-xs">${row.date}</td>
+                        <td class="p-3 font-semibold">${row.name}</td>
+                        <td class="p-3"><span class="text-xs font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700">${row.mode}</span></td>
+                        <td class="p-3 font-bold text-emerald-600 dark:text-emerald-400">${row.score}</td>
+                        <td class="p-3 font-semibold">${row.accuracy}</td>
+                        <td class="p-3"><span class="text-xs font-bold text-emerald-600">${row.status}</span></td>
+                    </tr>
+                `).join('');
+            }
+
+            clearHistory() {
+                if(confirm('क्या आप परिणाम इतिहास साफ़ करना चाहते हैं?')) {
+                    this.history = [];
+                    localStorage.removeItem('sujas_history');
+                    this.renderLeaderboard();
+                }
+            }
+
+            printResultReport() {
+                window.print();
+            }
+        }
+
+        // --- APPLICATION INITIALIZATION ---
+        let app;
+        window.onload = function() {
+            app = new SujasExamApp();
+            app.init();
+        };
+    </script>
+</body>
+</html>
